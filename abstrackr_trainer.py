@@ -1,4 +1,3 @@
-import pubmedpy
 import time
 import csv
 import sys
@@ -12,8 +11,8 @@ from pylons import config
 from abstrackr.config.environment import load_environment
 from abstrackr.model.meta import Session
 from abstrackr.lib.make_predictions_sklearn import make_predictions
-
 import abstrackr.model as model
+import pubmedpy
 
 from sqlalchemy import and_
 from sqlalchemy.orm import load_only
