@@ -2,6 +2,7 @@ import pubmedpy
 import time
 import csv
 import sys
+sys.path.insert(0, os.getcwd())
 import os
 from math import ceil
 
