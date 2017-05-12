@@ -42,7 +42,7 @@ def _create_reviews(p_id, iter_size, which_iter):
         ### THIS is the code for one run of the experiment
         
         ## labeled citation counter
-        labeled_citaion_counter = 0
+        labeled_citation_counter = 0
 
         ## we want to change the increment size if there are a certain number of citations is labeled
         if labeled_citation_counter > 15000:
