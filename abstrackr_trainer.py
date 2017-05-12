@@ -1,8 +1,8 @@
 import time
 import csv
+import os
 import sys
 sys.path.insert(0, os.getcwd())
-import os
 from math import ceil
 
 from paste.deploy import appconfig
