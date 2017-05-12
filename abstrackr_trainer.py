@@ -32,18 +32,26 @@ sys.setdefaultencoding('utf-8')
 conf = appconfig('config:development.ini', relative_to='.')
 load_environment(conf.global_conf, conf.local_conf)
 
-# studies = Session.query(model.Citation.id, model.Citation.project_id).filter_by(project_id = 6723)
-# for s in studies:
-#    ll = Session.query(model.Label).filter_by(study_id = s.id)
-#    ll.update(dict(project_id = 6723))
-
-
 def _create_reviews(p_id, iter_size, which_iter):
     u_id = 2629
     k_init = 400
     c_count = len(Session.query(model.Citation).filter_by(project_id = p_id).all())
-    k_inc = c_count / 30
+    k_inc = 500
+
     for itercount in range(iter_size * which_iter , iter_size * which_iter + iter_size):
+        ### THIS is the code for one run of the experiment
+        
+        ## labeled citation counter
+        labeled_citaion_counter = 0
+
+        ## we want to change the increment size if there are a certain number of citations is labeled
+        if labeled_citation_counter > 15000:
+            k_inc = 2000
+        elif labeled_citation_counter > 5000:
+            k_inc = 1000
+        else:
+            k_inc = 500
+
         labels = Session.query(model.Label).filter_by(project_id = p_id).all()
         user = Session.query(model.User).filter_by(id = u_id).first()
         citations = Session.query(model.Citation).filter_by(project_id = p_id).all()
@@ -73,46 +81,35 @@ def _create_reviews(p_id, iter_size, which_iter):
         for c in citations:
             citation = model.Citation()
             citation.project_id = new_review.id
-            #citation.pmid = c.pmid
-            #citation.refman = c.refman
             citation.title = c.title
             citation.abstract = c.abstract
-            #citation.authors = c.authors
-            #citation.journal = c.journal
-            #citation.publication_date = c.publication_date
             citation.keywords = c.keywords
-            #citation.tasks = c.tasks
-            #citation.priorities = c.priorities
-            #citation.labels = c.labels
             model.Session.add(citation)
             Session.flush()
 
             citation_dict[citation.id] = c.id
 
             if c.id in r_sample:
+                labeled_citation_counter += 1
                 state_dict[citation.id] = 1
                 for t in r_sample[c.id]:
                     label = model.Label()
                     label.project_id = new_review.id
                     label.study_id = citation.id
-                    #label.user_id = t.user_id
-                    #label.assignment_id = t.assignment_id
                     label.label = t.label
                     model.Session.add(label)
 
-        # project_ids.append(new_review.id)
         print new_review.id
         Session.commit()
 
         num_iters =  1 + int( ceil(1.0 * (c_count - k_init) / k_inc ))
 
         for i in range(num_iters):
-
             r_sample = defaultdict(list)
             print "EXPERIMENT NO: " + str(itercount)
             make_predictions(new_review.id)
 
-            ######################## here's where I keep records
+            ######################## here's where I record the results
             preds_for_review = Session.query(model.Prediction).filter(model.Prediction.project_id == new_review.id).all()
             path_to_preds_out = os.path.join("_exports", "predictions_%d_%d_of_%d.csv" % (p_id, i, itercount))
             with open(path_to_preds_out, 'w+') as fout:
@@ -144,6 +141,7 @@ def _create_reviews(p_id, iter_size, which_iter):
                 ccc = [label for label in Session.query(model.Citation.id).filter_by(project_id=new_review.id).filter(~model.Citation.labels.any()).limit(k_inc)]
                 print len(ccc)
                 for cc in ccc:
+                    labeled_citation_counter += 1
                     state_dict[cc.id] = 1
                     for ll in Session.query(model.Label).filter_by(study_id=citation_dict[cc.id]).all():
                         label = model.Label()
@@ -153,6 +151,7 @@ def _create_reviews(p_id, iter_size, which_iter):
                         model.Session.add(label)
             else:
                 for pp in P_a:
+                    labeled_citation_counter += 1
                     state_dict[pp.study_id] = 2
                     for ll in Session.query(model.Label).filter_by(project_id=p_id).filter_by(study_id=citation_dict[pp.study_id]).all():
                         label = model.Label()
@@ -161,6 +160,7 @@ def _create_reviews(p_id, iter_size, which_iter):
                         label.label = ll.label
                         model.Session.add(label)
             Session.commit()
+            
             print len(Session.query(model.Label).filter_by(project_id=new_review.id).all())
     return
 
