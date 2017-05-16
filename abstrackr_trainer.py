@@ -161,7 +161,7 @@ def _create_reviews(p_id, iter_size, which_iter):
             Session.commit()
 
             i += 1
-            if labeled_citation_count >= c_count:
+            if labeled_citation_counter >= c_count:
                break 
             
             print len(Session.query(model.Label).filter_by(project_id=new_review.id).all())
