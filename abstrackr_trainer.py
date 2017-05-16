@@ -128,9 +128,6 @@ def _create_reviews(p_id, iter_size, which_iter):
                     csv_out.writerow(row_str)
             ######################### ---------------------------
 
-            if i == num_iters - 1:
-                break
-
             P_a = []
             for pa in Session.query(model.Prediction).filter_by(project_id=new_review.id).order_by(model.Prediction.predicted_probability.desc()).all():
                 if state_dict[pa.study_id] == 0:
