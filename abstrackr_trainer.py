@@ -94,6 +94,9 @@ def _create_reviews(p_id, iter_size, which_iter):
         print new_review.id
         Session.commit()
 
+        ## i is a counter for the current increment
+        i = 0
+
         while True:
 
             ## we want to change the increment size if there are a certain number of citations is labeled
@@ -160,6 +163,7 @@ def _create_reviews(p_id, iter_size, which_iter):
                         model.Session.add(label)
             Session.commit()
 
+            i += 1
             if labeled_citation_count >= c_count:
                break 
             
