@@ -40,7 +40,7 @@ def _create_reviews(p_id, iter_size, which_iter):
 
     for itercount in range(iter_size * which_iter , iter_size * which_iter + iter_size):
         ### THIS is the code for one run of the experiment
-        
+
         ## labeled citation counter
         labeled_citation_counter = 0
 
@@ -68,7 +68,7 @@ def _create_reviews(p_id, iter_size, which_iter):
         Session.flush()
 
         state_dict = defaultdict(int)
-        citation_dict = {}    
+        citation_dict = {}
 
         for c in citations:
             citation = model.Citation()
@@ -128,6 +128,10 @@ def _create_reviews(p_id, iter_size, which_iter):
                     csv_out.writerow(row_str)
             ######################### ---------------------------
 
+            i += 1
+            if labeled_citation_counter >= c_count:
+               break 
+
             P_a = []
             for pa in Session.query(model.Prediction).filter_by(project_id=new_review.id).order_by(model.Prediction.predicted_probability.desc()).all():
                 if state_dict[pa.study_id] == 0:
@@ -160,16 +164,11 @@ def _create_reviews(p_id, iter_size, which_iter):
                         model.Session.add(label)
             Session.commit()
 
-            i += 1
-            if labeled_citation_counter >= c_count:
-               break 
-            
             print len(Session.query(model.Label).filter_by(project_id=new_review.id).all())
     return
 
 def main(argv):
     _create_reviews(int(argv[0]), int(argv[1]), int(argv[2]))
 
-if __name__ == "__main__": 
+if __name__ == "__main__":
     main(sys.argv[1:])
-
