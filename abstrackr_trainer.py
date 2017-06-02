@@ -1,6 +1,9 @@
 import time
 import csv
 import os
+
+import filedir, abspath, join from os.path
+
 import sys
 sys.path.insert(0, os.getcwd())
 from math import ceil
@@ -33,6 +36,14 @@ conf = appconfig('config:development.ini', relative_to='.')
 load_environment(conf.global_conf, conf.local_conf)
 
 def _create_reviews(p_id, iter_size, which_iter):
+    lock_file_path = join(filedir(abspath(__file__)), '_delete_lock.lck')
+
+    if not isfile(lock_file_path):
+        Session.query(model.Citation).filter_by(project_id != p_id).delete()
+        Session.query(model.Label).filter_by(project_id != p_id).delete()
+        open(lock_file_path,'w+').close()
+
+
     u_id = 2629
     k_init = 400
     c_count = len(Session.query(model.Citation).filter_by(project_id = p_id).all())
@@ -130,7 +141,7 @@ def _create_reviews(p_id, iter_size, which_iter):
 
             i += 1
             if labeled_citation_counter >= c_count:
-               break 
+               break
 
             P_a = []
             for pa in Session.query(model.Prediction).filter_by(project_id=new_review.id).order_by(model.Prediction.predicted_probability.desc()).all():
