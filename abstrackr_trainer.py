@@ -39,8 +39,8 @@ def _create_reviews(p_id, iter_size, which_iter):
     lock_file_path = join(dirname(abspath(__file__)), '_delete_lock.lck')
 
     if not isfile(lock_file_path):
-        Session.query(model.Citation).filter_by(model.Citation.project_id != p_id).delete()
-        Session.query(model.Label).filter_by(model.Label.project_id != p_id).delete()
+        Session.query(model.Citation).filter(model.Citation.project_id != p_id).delete()
+        Session.query(model.Label).filter(model.Label.project_id != p_id).delete()
         Session.commit()
         open(lock_file_path,'w+').close()
 
