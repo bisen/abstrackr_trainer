@@ -6,7 +6,7 @@ import operator
 from collections import defaultdict
 
 def merge_exports(p_id):
-    iters = 50    
+    iters = 52    
     
     a_array = []
     for _ in range(iters):
@@ -67,5 +67,5 @@ def merge_exports(p_id):
         for f_row in final_arr:
             writer.writerow(f_row)
         iter_count += 1 
-merge_exports(4167) 
+merge_exports(int(sys.argv[1])) 
 
