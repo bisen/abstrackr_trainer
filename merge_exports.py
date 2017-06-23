@@ -44,7 +44,8 @@ def merge_exports(p_id):
         to_write = {}
         header = ["id","title"]
         for _, inc_dict in sortedlist:
-            print len(inc_dict)
+            if len(inc_dict) == 0:
+                continue
             if _pass:
                 _pass = False
                 to_write = inc_dict
