@@ -47,7 +47,7 @@ def _create_reviews(p_id, iter_size, which_iter):
     u_id = 2629
     k_init = 400
     c_count = len(Session.query(model.Citation).filter_by(project_id = p_id).all())
-    k_inc = 500
+    k_inc = 100
 
     for itercount in range(iter_size * which_iter , iter_size * which_iter + iter_size):
         ### THIS is the code for one run of the experiment
@@ -111,12 +111,12 @@ def _create_reviews(p_id, iter_size, which_iter):
         while True:
 
             ## we want to change the increment size if there are a certain number of citations is labeled
-            if labeled_citation_counter > 15000:
-                k_inc = 2000
-            elif labeled_citation_counter > 5000:
-                k_inc = 1000
-            else:
-                k_inc = 500
+            #if labeled_citation_counter > 15000:
+            #    k_inc = 2000
+            #elif labeled_citation_counter > 5000:
+            #    k_inc = 1000
+            #else:
+            #    k_inc = 500
 
             r_sample = defaultdict(list)
             print "EXPERIMENT NO: " + str(itercount)
