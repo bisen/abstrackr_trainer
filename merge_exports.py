@@ -6,7 +6,7 @@ import operator
 from collections import defaultdict
 
 def merge_exports(p_id):
-    iters = 52    
+    iters = 50    
     
     a_array = []
     for _ in range(iters):
@@ -43,16 +43,16 @@ def merge_exports(p_id):
         _pass = True
         to_write = {}
         header = ["id","title"]
+        ggg = 0
         for _, inc_dict in sortedlist:
             if len(inc_dict) == 0:
                 continue
+            header += ["prob_"+str(ggg),"pred_"+str(ggg), "group_"+str(ggg)]
+            ggg += 1
             if _pass:
                 _pass = False
                 to_write = inc_dict
-                ggg = 0
                 for key in inc_dict.keys():
-                    header += ["prob_"+str(ggg),"pred_"+str(ggg)]
-                    ggg += 1
                 continue
             for key in inc_dict.keys():
                 if key == "True":
