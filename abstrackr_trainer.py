@@ -87,6 +87,7 @@ def _create_reviews(p_id, iter_size, which_iter):
             citation.title = c.title
             citation.abstract = c.abstract
             citation.keywords = c.keywords
+            citation.refman = c.refman
             model.Session.add(citation)
             Session.flush()
 
@@ -127,7 +128,7 @@ def _create_reviews(p_id, iter_size, which_iter):
             path_to_preds_out = os.path.join("_exports", "predictions_%d_%d_of_%d.csv" % (p_id, i, itercount))
             with open(path_to_preds_out, 'w+') as fout:
                 csv_out = csv.writer(fout)
-                preds_file_headers = ["citation_id", "title", "predicted p of being relevant", "'hard' screening prediction*", "state"]
+                preds_file_headers = ["citation_id", "refman", "title", "predicted p of being relevant", "'hard' screening prediction*", "state"]
                 csv_out.writerow(preds_file_headers)
                 sorted_preds = sorted(preds_for_review, key=lambda x : x.predicted_probability, reverse=True)
 
@@ -135,7 +136,7 @@ def _create_reviews(p_id, iter_size, which_iter):
                     citation = Session.query(model.Citation).filter(model.Citation.id == pred.study_id).first()
                     #citation = self._get_citation_from_id(pred.study_id)
                     citation_title = citation.title.encode('ascii', 'ignore')
-                    row_str = [citation.id, citation_title, pred.predicted_probability, pred.prediction, state_dict[citation.id]]
+                    row_str = [citation.id, citation.refman, citation_title, pred.predicted_probability, pred.prediction, state_dict[citation.id]]
                     csv_out.writerow(row_str)
             ######################### ---------------------------
 
