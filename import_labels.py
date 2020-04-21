@@ -50,7 +50,7 @@ def parse_csv_header(header, project):
          
 def parse_csv_row(row, users, assignments, project):
     source_id = row[0]
-    citation = Session.query(model.Citation).filter_by(refman = source_id).first()
+    citation = Session.query(model.Citation).filter_by(project_id = project.id).filter_by(pmid = source_id).first()
     for index, label_val in enumerate(row[1:]):
         if label_val:
             user = users[index]
